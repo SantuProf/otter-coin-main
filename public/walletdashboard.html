@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Wallet Dashboard | Otter Coin</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --secondary: #38b2ac;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+            --dark-gray: #4a5568;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .dashboard {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .x2-case {
+            background: rgba(15, 20, 30, 0.7);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .balance-card {
+            background: rgba(26, 32, 44, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .balance-title {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+        
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .balance-currency {
+            color: var(--secondary);
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .action-btn {
+            background: rgba(15, 20, 30, 0.7);
+            border-radius: 8px;
+            padding: 1rem;
+            border: none;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(43, 108, 176, 0.3);
+        }
+        
+        .action-btn .icon {
+            font-size: 1.5rem;
+        }
+        
+        .transaction-history {
+            background: rgba(26, 32, 44, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .transaction-history h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        /* Crypto decorations */
+        .crypto-decoration {
+            position: fixed;
+            opacity: 0.1;
+            z-index: -1;
+            font-size: 3rem;
+        }
+        
+        .decoration-1 {
+            top: 20%;
+            left: 10%;
+        }
+        
+        .decoration-2 {
+            bottom: 15%;
+            right: 10%;
+        }
+    </style>
+</head>
+<body>
+         <div class="button" onclick="window.location.href='profile.html'">
+        <i class="fa-solid fa-arrow-left"></i>
+    </div>
+    <!-- Crypto-themed background decorations -->
+    <div class="crypto-decoration decoration-1">Ξ</div>
+    <div class="crypto-decoration decoration-2">₿</div>
+    
+    <div class="dashboard">
+        <div class="header">
+            <h1>Otter</h1>
+            <div class="x2-case">X 2 case</div>
+        </div>
+        
+        <div class="balance-card">
+            <div class="balance-title">Total Balance</div>
+            <div class="balance-amount">320.00 <span class="balance-currency">Otters</span></div>
+        </div>
+        
+        <div class="action-buttons" style="display: grid; grid-template-columns: repeat(2, 1fr);">
+            <button class="action-btn" id="sendBtn">
+                <span class="icon">↑</span>
+                <span>Send</span>
+            </button>
+            <button class="action-btn" id="receiveBtn">
+                <span class="icon">↓</span>
+                <span>Receive</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const sendBtn = document.getElementById('sendBtn');
+        const receiveBtn = document.getElementById('receiveBtn');
+        
+        // Button actions
+        sendBtn.addEventListener('click', function() {
+            window.location.href = 'send.html';
+        });
+        
+        receiveBtn.addEventListener('click', function() {
+            window.location.href = 'receive.html';
+        });
+        
+        
+        // In a real implementation:
+        // 1. Fetch actual balance from blockchain
+        // 2. Load transaction history
+        // 3. Handle wallet interactions
+        
+        // Example of loading real data:
+         fetch('/api/wallet/balance')
+           .then(response => response.json())
+           .then(data => {
+               document.querySelector('.balance-amount').textContent = 
+                   `${data.balance} <span class="balance-currency">Otters</span>`;
+           });
+        async function loadWalletData() {
+            const response = await fetch('/api/wallet/balance');
+            const data = await response.json();
+            document.querySelector('.balance-amount').textContent = 
+                `${data.balance} <span class="balance-currency">Otters</span>`;
+        }
+        loadWalletData();
+ 
+    </script>
+</body>
+</html>

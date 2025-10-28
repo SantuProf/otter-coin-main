@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <title>Verify Recovery Phrase | Otter Coin</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --secondary: #38b2ac;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+            --error: #e53e3e;
+            --success: #48bb78;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .verification-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(26, 32, 44, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .verification-header {
+            margin-bottom: 2rem;
+        }
+        
+        .verification-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        .verification-header p {
+            color: var(--gray);
+            line-height: 1.5;
+        }
+        
+        .word-checks {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .word-check {
+            text-align: left;
+        }
+        
+        .word-check label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .word-check input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            background: rgba(15, 20, 30, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+        
+        .word-check input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .continue-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .continue-btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .continue-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(43, 108, 176, 0.4);
+        }
+        
+        .error-message {
+            color: var(--error);
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        /* Crypto decorations */
+        .crypto-decoration {
+            position: fixed;
+            opacity: 0.1;
+            z-index: -1;
+            font-size: 3rem;
+        }
+        
+        .decoration-1 {
+            top: 20%;
+            left: 10%;
+        }
+        
+        .decoration-2 {
+            bottom: 15%;
+            right: 10%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Crypto-themed background decorations -->
+    <div class="crypto-decoration decoration-1">Ξ</div>
+    <div class="crypto-decoration decoration-2">₿</div>
+    
+    <div class="verification-container">
+        <div class="verification-header">
+            <h1>Verify Your Recovery Phrase</h1>
+            <p>Please enter the following words from your recovery phrase to confirm you've saved it correctly</p>
+        </div>
+        
+        <div class="word-checks" id="wordChecks">
+            <!-- Will be populated by JavaScript -->
+        </div>
+        
+        <div class="error-message" id="errorMessage">
+            One or more words are incorrect. Please check carefully.
+        </div>
+        
+        <button class="continue-btn" id="continueBtn" disabled>Continue</button>
+    </div>
+
+    <script>
+        // In a real app, this would come from the previous step
+        const recoveryPhrase = "oxygen gesture vital wheat spatial verify innocent calm hybrid absorb liquid ripple";
+        const words = recoveryPhrase.split(' ');
+        
+        // Select 3 random word positions to verify (e.g. word 7, 12, 4)
+        const positions = [7, 12, 4].sort((a, b) => a - b); // Sorted for display
+        const correctAnswers = positions.map(pos => words[pos - 1]); // Arrays are 0-indexed
+        
+        // Create verification inputs
+        const wordChecksContainer = document.getElementById('wordChecks');
+        positions.forEach((pos, index) => {
+            const div = document.createElement('div');
+            div.className = 'word-check';
+            div.innerHTML = `
+                <label for="word${index}">Word #${pos}</label>
+                <input type="text" id="word${index}" data-position="${pos}" autocomplete="off">
+            `;
+            wordChecksContainer.appendChild(div);
+        });
+        
+        // Get all input elements
+        const inputs = document.querySelectorAll('.word-check input');
+        const continueBtn = document.getElementById('continueBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        // Validate inputs as user types
+        inputs.forEach(input => {
+            input.addEventListener('input', validateInputs);
+        });
+        
+        function validateInputs() {
+            let allValid = true;
+            const userAnswers = [];
+            
+            inputs.forEach((input, index) => {
+                const userAnswer = input.value.trim().toLowerCase();
+                const correctAnswer = correctAnswers[index].toLowerCase();
+                const isValid = userAnswer === correctAnswer;
+                
+                // Visual feedback
+                if (userAnswer && !isValid) {
+    input.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--error');
+} else {
+    input.style.borderColor = isValid 
+        ? getComputedStyle(document.documentElement).getPropertyValue('--success') 
+        : 'rgba(255, 255, 255, 0.1)';
+}
+                
+                userAnswers.push(userAnswer);
+                if (userAnswer && !isValid) allValid = false;
+            });
+            
+            // Check if all entered answers are correct
+            const allCorrect = userAnswers.every((answer, index) => 
+                answer && answer === correctAnswers[index].toLowerCase()
+            );
+            
+            continueBtn.disabled = !allCorrect;
+            errorMessage.style.display = allValid ? 'none' : 'block';
+        }
+        
+        // Continue button action
+        continueBtn.addEventListener('click', function() {
+            // In real implementation:
+            // 1. Mark phrase as verified in database
+            // 2. Redirect to dashboard
+            
+            alert('Wallet Successfully Created!');
+            window.location.href = 'wallet.html';
+        });
+        
+        // In production, you would:
+        // 1. Get the actual recovery phrase from secure storage
+        // 2. Use more sophisticated word selection
+        // 3. Potentially implement attempt limits
+    </script>
+</body>
+</html>

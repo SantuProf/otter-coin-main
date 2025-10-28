@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Wallet Creation | Otter Coin</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --secondary: #38b2ac;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+            --dark-gray: #4a5568;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .backup-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(26, 32, 44, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .backup-header {
+            margin-bottom: 2rem;
+        }
+        
+        .backup-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        .backup-header p {
+            color: var(--gray);
+            line-height: 1.5;
+        }
+        
+        .recovery-phrase {
+            background: rgba(15, 20, 30, 0.7);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: monospace;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            word-break: break-all;
+        }
+        
+        .warning-box {
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        
+        .warning-box ul {
+            padding-left: 1.2rem;
+            margin: 0.5rem 0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            background: var(--dark-gray);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--dark);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            border: 1px solid var(--primary);
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Crypto decorations */
+        .crypto-decoration {
+            position: fixed;
+            opacity: 0.1;
+            z-index: -1;
+            font-size: 3rem;
+        }
+        
+        .decoration-1 {
+            top: 20%;
+            left: 10%;
+        }
+        
+        .decoration-2 {
+            bottom: 15%;
+            right: 10%;
+        }
+    </style>
+</head>
+<body>
+     <section>
+        <div class="button" onclick="window.location.href='transaction&phrase.html'">
+        <i class="fa-solid fa-arrow-left"></i>
+    </div>
+    <!-- Crypto-themed background decorations -->
+    <div class="crypto-decoration decoration-1">Ξ</div>
+    <div class="crypto-decoration decoration-2">₿</div>
+    
+    <div class="backup-container">
+        <div class="backup-header">
+            <h1>Your Recovery Phrase</h1>
+            <p>This phrase is the only way to restore your wallet. Save it securely.</p>
+        </div>
+        
+        <div class="recovery-phrase" id="recoveryPhrase">
+            oxygen gesture vital wheat spatial<br>
+            verify innocent calm hybrid<br>
+            absorb liquid ripple
+        </div>
+        
+        <div class="warning-box">
+            <strong>⚠️ Important Security Warning:</strong>
+            <ul>
+                <li>Never share your recovery phrase with anyone</li>
+                <li>Store it offline in a secure location</li>
+                <li>This cannot be recovered if lost</li>
+            </ul>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn tooltip" id="copyBtn">
+                <span>Copy to clipboard</span>
+                <span class="tooltiptext">Copied!</span>
+            </button>
+            <button class="action-btn" id="saveImageBtn">Save as image</button>
+        </div>
+        </div>
+
+     </section>
+    <script>
+        // DOM Elements
+        const recoveryPhrase = document.getElementById('recoveryPhrase');
+        const copyBtn = document.getElementById('copyBtn');
+        const saveImageBtn = document.getElementById('saveImageBtn');
+        const tooltip = document.querySelector('.tooltiptext');
+        
+        // Copy to clipboard
+        copyBtn.addEventListener('click', function() {
+            const text = recoveryPhrase.textContent.replace(/\s+/g, ' ').trim();
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    tooltip.textContent = 'Copied!';
+                })
+                .catch(err => {
+                    tooltip.textContent = 'Failed to copy';
+                    console.error('Failed to copy: ', err);
+                });
+        });
+        
+        // Save as image
+        saveImageBtn.addEventListener('click', function() {
+            // Create a canvas element
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = recoveryPhrase.offsetWidth + 40;
+            canvas.height = recoveryPhrase.offsetHeight + 40;
+            
+            // Draw background
+            ctx.fillStyle = '#1a202c';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw border
+            ctx.strokeStyle = '#2b6cb0';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+            
+            // Draw text
+            ctx.fillStyle = '#f7fafc';
+            ctx.font = '18px monospace';
+            const lines = recoveryPhrase.textContent.split('\n');
+            const lineHeight = 30;
+            const startY = (canvas.height - (lines.length * lineHeight)) / 2;
+            
+            lines.forEach((line, index) => {
+                ctx.fillText(line.trim(), 20, startY + (index * lineHeight));
+            });
+            
+            // Add logo
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillStyle = '#38b2ac';
+            ctx.fillText('Otter Coin Wallet', 20, canvas.height - 20);
+            
+            // Convert to image and download
+            const link = document.createElement('a');
+            link.download = 'otter-coin-recovery-phrase.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    </script>
+</body>
+</html>

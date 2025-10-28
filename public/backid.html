@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <title>Document Upload | Otter Coin</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --secondary: #38b2ac;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+            --dark-gray: #4a5568;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .upload-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(26, 32, 44, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .upload-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .upload-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .upload-header p {
+            color: var(--gray);
+        }
+        
+        .drop-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-zone:hover {
+            border-color: var(--primary);
+            background: rgba(43, 108, 176, 0.1);
+        }
+        
+        .drop-zone.active {
+            border-color: var(--primary);
+            background: rgba(43, 108, 176, 0.2);
+        }
+        
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .browse-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        .file-info {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .preview-container {
+            margin: 1.5rem 0;
+            display: none;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .continue-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .continue-btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .continue-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(43, 108, 176, 0.4);
+        }
+        
+        /* Crypto decorations */
+        .crypto-decoration {
+            position: fixed;
+            opacity: 0.1;
+            z-index: -1;
+            font-size: 3rem;
+        }
+        
+        .decoration-1 {
+            top: 20%;
+            left: 10%;
+        }
+        
+        .decoration-2 {
+            bottom: 15%;
+            right: 10%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Crypto-themed background decorations -->
+    <div class="crypto-decoration decoration-1">Ξ</div>
+    <div class="crypto-decoration decoration-2">₿</div>
+    
+    <div class="upload-container">
+        <div class="upload-header">
+            <h1>Back of ID</h1>
+            <p>Upload your document for verification</p>
+        </div>
+        
+        <input type="file" id="fileInput" class="file-input" accept="image/*,.pdf">
+        
+        <div class="drop-zone" id="dropZone">
+            <div class="upload-icon">📄</div>
+            <p>Click or drag and drop your document here</p>
+            <button type="button" class="browse-btn">Browse Files</button>
+            <div class="file-info" id="fileInfo"></div>
+        </div>
+        
+        <div class="preview-container" id="previewContainer">
+            <p>Document Preview:</p>
+            <img id="previewImage" class="preview-image" src="#" alt="Document preview">
+        </div>
+        
+        <button class="continue-btn" id="continueBtn" disabled>Continue</button>
+    </div>
+
+    <script>
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const browseBtn = document.querySelector('.browse-btn');
+        const fileInfo = document.getElementById('fileInfo');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const continueBtn = document.getElementById('continueBtn');
+        
+        // Open file dialog when clicking browse or drop zone
+        browseBtn.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        // Handle drag and drop events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('active');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('active');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('active');
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelection(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // Handle file selection
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                handleFileSelection(fileInput.files[0]);
+            }
+        });
+        
+        function handleFileSelection(file) {
+            // Validate file
+            const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (!validTypes.includes(file.type)) {
+                fileInfo.textContent = 'Invalid file type. Please upload JPEG, PNG, or PDF.';
+                fileInfo.style.color = 'var(--error)';
+                continueBtn.disabled = true;
+                return;
+            }
+            
+            if (file.size > maxSize) {
+                fileInfo.textContent = 'File too large (max 5MB)';
+                fileInfo.style.color = 'var(--error)';
+                continueBtn.disabled = true;
+                return;
+            }
+            
+            // Update UI
+            fileInfo.textContent = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            fileInfo.style.color = 'var(--light)';
+            continueBtn.disabled = false;
+            
+            // Show preview if image
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        }
+        
+        // Continue button action
+        continueBtn.addEventListener('click', () => {
+            // In real implementation:
+            // 1. Upload document to secure server
+            // 2. Proceed to next verification step
+            
+            alert('Document uploaded successfully!');
+            // window.location.href = 'kyc-next-step.html';
+        });
+        
+        // In production, you would:
+        // 1. Encrypt documents before upload
+        // 2. Add progress indicators
+        // 3. Connect to your backend API
+    </script>
+</body>
+</html>

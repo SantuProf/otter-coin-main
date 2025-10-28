@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <title>Selfie Verification | Otter Coin</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --secondary: #38b2ac;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+            --dark-gray: #4a5568;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .selfie-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(26, 32, 44, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .selfie-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .selfie-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .selfie-header p {
+            color: var(--gray);
+        }
+        
+        .camera-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #video {
+            width: 100%;
+            display: none;
+        }
+        
+        #canvas {
+            display: none;
+        }
+        
+        .camera-placeholder {
+            font-size: 3rem;
+            color: var(--dark-gray);
+        }
+        
+        .capture-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--light);
+            border: 4px solid var(--primary);
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .capture-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            opacity: 0;
+            z-index: 5;
+        }
+        
+        .preview-container {
+            display: none;
+            margin: 1.5rem 0;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .primary-btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .secondary-btn {
+            background: transparent;
+            color: var(--gray);
+            border: 1px solid var(--dark-gray);
+        }
+        
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(43, 108, 176, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Crypto decorations */
+        .crypto-decoration {
+            position: fixed;
+            opacity: 0.1;
+            z-index: -1;
+            font-size: 3rem;
+        }
+        
+        .decoration-1 {
+            top: 20%;
+            left: 10%;
+        }
+        
+        .decoration-2 {
+            bottom: 15%;
+            right: 10%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Crypto-themed background decorations -->
+    <div class="crypto-decoration decoration-1">Ξ</div>
+    <div class="crypto-decoration decoration-2">₿</div>
+    
+    <div class="selfie-container">
+        <div class="selfie-header">
+            <h1>Take a Selfie</h1>
+            <p>We need to verify your identity</p>
+        </div>
+        
+        <div class="camera-container">
+            <div class="camera-placeholder">📷</div>
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+            <div class="capture-btn" id="captureBtn"></div>
+            <div class="capture-effect" id="captureEffect"></div>
+        </div>
+        
+        <div class="preview-container" id="previewContainer">
+            <p>Selfie Preview:</p>
+            <img id="previewImage" class="preview-image" src="#" alt="Selfie preview">
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn secondary-btn" id="retakeBtn">Retake</button>
+            <button class="btn primary-btn" id="continueBtn" disabled>Continue</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('captureBtn');
+        const captureEffect = document.getElementById('captureEffect');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const continueBtn = document.getElementById('continueBtn');
+        const retakeBtn = document.getElementById('retakeBtn');
+        const cameraPlaceholder = document.querySelector('.camera-placeholder');
+        
+        let stream = null;
+        let selfieTaken = false;
+        
+        // Initialize camera
+        function initCamera() {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+                .then(function(s) {
+                    stream = s;
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                    cameraPlaceholder.style.display = 'none';
+                })
+                .catch(function(err) {
+                    console.error("Error accessing camera: ", err);
+                    alert("Could not access the camera. Please check permissions.");
+                });
+        }
+        
+        // Capture selfie
+        function captureSelfie() {
+            // Show flash effect
+            captureEffect.style.opacity = 0.8;
+            setTimeout(() => {
+                captureEffect.style.opacity = 0;
+            }, 200);
+            
+            // Capture image
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Show preview
+            const imageDataUrl = canvas.toDataURL('image/jpeg');
+            previewImage.src = imageDataUrl;
+            previewContainer.style.display = 'block';
+            
+            // Hide video and show preview
+            video.style.display = 'none';
+            captureBtn.style.display = 'none';
+            
+            // Enable continue button
+            continueBtn.disabled = false;
+            selfieTaken = true;
+        }
+        
+        // Retake selfie
+        function retakeSelfie() {
+            previewContainer.style.display = 'none';
+            video.style.display = 'block';
+            captureBtn.style.display = 'block';
+            continueBtn.disabled = true;
+            selfieTaken = false;
+        }
+        
+        // Stop camera
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        }
+        
+        // Event listeners
+        captureBtn.addEventListener('click', captureSelfie);
+        retakeBtn.addEventListener('click', retakeSelfie);
+        
+        continueBtn.addEventListener('click', () => {
+            // In real implementation:
+            // 1. Upload selfie to server
+            // 2. Proceed to next verification step
+            
+            alert('Selfie submitted successfully!');
+            stopCamera();
+            // window.location.href = 'kyc-next-step.html';
+        });
+        
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            initCamera();
+        });
+        
+        // Clean up when leaving page
+        window.addEventListener('beforeunload', () => {
+            stopCamera();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Otter Coin Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Root and theme variables */
+    :root {
+      --sidebar-bg: #23272f;
+      --sidebar-active: #34495e;
+      --sidebar-hover: #3a3f51;
+      --main-bg: #f8f9fb;
+      --main-dark-bg: #181a21;
+      --text: #222;
+      --text-dark: #eee;
+      --primary: #009988;
+      --accent: #ffbc00;
+      --transition: 0.3s cubic-bezier(.55,.1,.22,.8);
+      --radius: 10px;
+    }
+    [data-theme="dark"] {
+      --sidebar-bg: #181a21;
+      --sidebar-active: #23272f;
+      --sidebar-hover: #34495e;
+      --main-bg: #1c1f26;
+      --text: #eee;
+      --primary: #00c7b1;
+      --accent: #ffd700;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background: var(--main-bg);
+      color: var(--text);
+      transition: background var(--transition), color var(--transition);
+      min-height: 100vh;
+    }
+
+    /* Loader animation */
+    #loader {
+      position: fixed;
+      top:0;left:0;right:0;bottom:0;
+      background: var(--main-bg);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .6s;
+    }
+    #loader.hide { opacity: 0; pointer-events: none; }
+
+    .otter-icon {
+      width: 80px; height: 80px;
+      animation: otter-spin 2s infinite linear;
+    }
+    @keyframes otter-spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+    /* Layout */
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 230px;
+      background: var(--sidebar-bg);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 0;
+      transition: background var(--transition);
+      box-shadow: 2px 0 10px rgba(0,0,0,0.04);
+    }
+    .sidebar .logo {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 1.6em;
+      letter-spacing: 2px;
+      font-weight: bold;
+      color: var(--accent);
+      text-shadow: 0 1px 0 var(--sidebar-active);
+      user-select: none;
+    }
+    .sidebar .options {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sidebar .option {
+      padding: 12px 28px;
+      margin: 0 0 2px 0;
+      border-radius: var(--radius) 0 0 var(--radius);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 1.09em;
+      position: relative;
+      transition: background var(--transition), color var(--transition), transform .18s;
+      will-change: transform;
+      background: transparent;
+      border: none;
+      outline: none;
+    }
+    .sidebar .option.active, .sidebar .option:hover {
+      background: var(--sidebar-active);
+      color: var(--accent);
+      transform: scale(1.04);
+    }
+    .sidebar .option .icon {
+      font-size: 1.25em;
+      transition: transform .28s;
+    }
+    .sidebar .option:hover .icon {
+      transform: rotate(-10deg) scale(1.1);
+    }
+    /* Sidebar animation */
+    .sidebar .option[data-animate="true"]::after {
+      content: "";
+      display: block;
+      position: absolute;
+      left: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 5px; height: 80%;
+      background: linear-gradient(180deg, var(--accent) 40%, transparent 100%);
+      border-radius: 0 7px 7px 0;
+      transition: opacity var(--transition);
+      opacity: .7;
+    }
+    /* Dark mode toggle button */
+    .theme-toggle {
+      position: absolute;
+      top: 20px; right: 35px;
+      z-index: 10;
+      background: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-size: 1.7em;
+      transition: transform .32s, color .22s;
+      color: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      padding: 9px;
+    }
+    .theme-toggle:hover {
+      color: var(--accent);
+      transform: scale(1.19) rotate(-15deg);
+    }
+    .theme-toggle .moon {
+      transition: transform .7s;
+      display: inline-block;
+      animation: moon-bounce .7s infinite alternate;
+    }
+    @keyframes moon-bounce {
+      0% { transform: scale(1) rotate(-2deg);}
+      100% { transform: scale(1.18) rotate(8deg);}
+    }
+    /* Main content */
+    .main {
+      flex: 1;
+      padding: 32px 40px 30px 40px;
+      background: var(--main-bg);
+      min-height: 100vh;
+      transition: background var(--transition);
+      position: relative;
+      overflow-x: hidden;
+    }
+    /* Top bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 25px;
+    }
+    .top-bar .search {
+      flex: 1;
+      max-width: 350px;
+    }
+    .top-bar .search input {
+      width:100%;
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      background: #fff;
+      transition: border .22s;
+    }
+    [data-theme="dark"] .top-bar .search input {
+      background: #23272f;
+      color: #eee;
+      border-color: #444;
+    }
+    /* Dashboard cards */
+    .dashboard-cards {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 24px;
+      min-width: 220px;
+      min-height: 110px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      transition: background var(--transition), color var(--transition), transform var(--transition);
+      color: var(--text);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .card:hover {
+      background: var(--primary);
+      color: #fff;
+      transform: scale(1.04) translateY(-2px);
+    }
+    .card .card-title {
+      font-size: 1em;
+      font-weight: 500;
+      margin-bottom: 7px;
+      opacity: 0.82;
+    }
+    .card .card-value {
+      font-size: 2em;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .card .card-icon {
+      position: absolute;
+      top: 15px; right: 15px;
+      font-size: 2.2em;
+      opacity: 0.16;
+    }
+    [data-theme="dark"] .card {
+      background: #23272f;
+      color: #eee;
+    }
+    /* Section titles */
+    .section-title {
+      font-size: 1.25em;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: var(--primary);
+      letter-spacing: 1px;
+      text-shadow: 0 1px 0 #fff3;
+      user-select: none;
+    }
+    /* Users table */
+    .users-table, .blocklist-table, .kyc-table, .wallet-table, .tx-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 28px;
+      box-shadow: 0 0 4px rgba(0,0,0,0.03);
+    }
+    .users-table th, .users-table td,
+    .blocklist-table th, .blocklist-table td,
+    .kyc-table th, .kyc-table td,
+    .wallet-table th, .wallet-table td,
+    .tx-table th, .tx-table td {
+      padding: 11px 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      font-size: 1em;
+    }
+    .users-table th, .blocklist-table th, .kyc-table th, .wallet-table th, .tx-table th {
+      background: var(--sidebar-hover);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    [data-theme="dark"] .users-table th, [data-theme="dark"] .blocklist-table th,
+    [data-theme="dark"] .kyc-table th, [data-theme="dark"] .wallet-table th, [data-theme="dark"] .tx-table th {
+      background: var(--sidebar-active);
+      color: var(--accent);
+    }
+    /* Table row animation */
+    tr.row-anim {
+      animation: rowAppear .5s;
+    }
+    @keyframes rowAppear {
+      from { opacity: 0; transform: translateY(12px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    /* Buttons */
+    .btn {
+      padding: 7px 22px;
+      border-radius: 8px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 1em;
+      margin-right: 8px;
+      transition: background .22s, transform .16s;
+      outline: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .btn:last-child { margin-right: 0;}
+    .btn:hover {
+      background: var(--accent);
+      color: var(--sidebar-active);
+      transform: scale(1.09);
+    }
+    .btn-danger {
+      background: #d32f2f;
+      color: #fff;
+    }
+    .btn-danger:hover { background: #ef5350; color:#fff;}
+    .btn-secondary {
+      background: #23272f;
+      color: #fff;
+    }
+    .btn-secondary:hover { background: var(--primary); }
+    .btn-small {
+      padding: 4px 10px;
+      font-size: .97em;
+    }
+    /* Modal/Full screen overlay */
+    .modal, .screen {
+      position: fixed;
+      top:0; left:0; width:100vw; height:100vh;
+      background: rgba(0,0,0,0.17);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .22s;
+      opacity: 1;
+    }
+    .modal.hide, .screen.hide { opacity: 0; pointer-events: none;}
+    .modal-content, .screen-content {
+      background: var(--main-bg);
+      padding: 28px 36px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.11);
+      min-width: 380px;
+      max-width: 98vw;
+      max-height: 97vh;
+      overflow-y: auto;
+      position: relative;
+      animation: modalAppear .5s cubic-bezier(.42,1.09,.62,.99);
+    }
+    @keyframes modalAppear {
+      from { opacity: 0; transform: scale(.85);}
+      to { opacity: 1; transform: scale(1);}
+    }
+    .screen-content {
+      min-width: 500px;
+      width: 100%;
+      max-width: 680px;
+      padding: 38px 55px;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.13);
+    }
+    .modal-close, .screen-close {
+      position: absolute;
+      top: 18px; right: 18px;
+      background: #eee;
+      color: #222;
+      border-radius: 50%;
+      width: 32px; height: 32px;
+      display: flex;align-items:center;justify-content:center;
+      font-size: 1.2em;
+      cursor: pointer;
+      border: none;
+      transition: background .22s;
+      z-index: 1;
+    }
+    .modal-close:hover, .screen-close:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    [data-theme="dark"] .modal-content, [data-theme="dark"] .screen-content {
+      background: #23272f;
+      color: #eee;
+    }
+    /* Forms */
+    .form-group {
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-weight: 500;
+      margin-bottom: 3px;
+      color: var(--primary);
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      padding: 8px 12px;
+      border-radius: 7px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      background: #fff;
+    }
+    [data-theme="dark"] .form-group input, [data-theme="dark"] .form-group textarea, [data-theme="dark"] .form-group select {
+      background: #23272f;
+      color: #eee;
+      border-color: #444;
+    }
+    /* Utility */
+    .flex { display: flex; gap: 14px; align-items: center; }
+    .justify-end { justify-content: flex-end;}
+    .justify-between { justify-content: space-between;}
+    .align-center { align-items: center;}
+    .mt-2 { margin-top: 12px;}
+    .mt-3 { margin-top: 20px;}
+    .mb-2 { margin-bottom: 14px;}
+    .mb-3 { margin-bottom: 24px;}
+    .copy-link { cursor: pointer; font-size: 1.08em; color: var(--accent); margin-left: 8px;}
+    .copy-link:hover { color: var(--primary); text-decoration: underline;}
+    .status-active { color: var(--primary); font-weight: bold;}
+    .status-inactive { color: #d32f2f; font-weight: bold;}
+    .badge { background: var(--accent); color: #222; padding: 2px 8px; border-radius: 6px; font-size: .89em; margin-left: 8px;}
+    .badge-pending { background: #ffd7a0; color: #c77; }
+    .badge-approved { background: #a0ffd7; color: #077; }
+    .badge-rejected { background: #ffa0a0; color: #900; }
+    /* Hide scroll on sidebar */
+    .sidebar::-webkit-scrollbar { display: none; }
+    /* Responsive */
+    @media (max-width: 900px) {
+      .container { flex-direction: column;}
+      .sidebar { width: 100vw; flex-direction: row; height: 70px; padding: 0 6px;}
+      .sidebar .logo { display: none;}
+      .sidebar .options { flex-direction: row; gap: 2px;}
+      .sidebar .option { border-radius: 0; padding: 10px 18px; font-size: 1em;}
+      .sidebar .option.active, .sidebar .option:hover { background: var(--sidebar-active);}
+    }
+    @media (max-width: 700px) {
+      .main { padding: 18px 7px 18px 7px;}
+      .screen-content, .modal-content { min-width: 80vw; width: 98vw; padding: 17px 6vw;}
+    }
+    @media (max-width: 520px) {
+      .main { padding: 9px 2vw;}
+      .screen-content, .modal-content { min-width: 99vw; width: 99vw; padding: 8px 2vw;}
+      .dashboard-cards { flex-direction: column; gap: 13px;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Loader Animation -->
+  <div id="loader">
+    <svg class="otter-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#009988"/><text x="50%" y="55%" text-anchor="middle" fill="#fff" font-size="33" font-family="Arial" dy=".3em">OTC</text></svg>
+  </div>
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle" id="themeToggleBtn" title="Toggle dark mode">
+    <span class="moon">&#9789;</span>
+  </button>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">Otter Coin Admin</div>
+      <nav class="options">
+        <button class="option active" data-section="dashboard" data-animate="true">
+          <span class="icon">&#127968;</span> Dashboard
+        </button>
+        <button class="option" data-section="users" data-animate="true">
+          <span class="icon">&#128100;</span> Users
+        </button>
+        <button class="option" data-section="kyc" data-animate="true">
+          <span class="icon">&#128196;</span> KYC
+        </button>
+        <button class="option" data-section="wallet" data-animate="true">
+          <span class="icon">&#128179;</span> Wallet
+        </button>
+        <button class="option" data-section="transactions" data-animate="true">
+          <span class="icon">&#128179;</span> Transactions
+        </button>
+        <button class="option" data-section="settings" data-animate="true">
+          <span class="icon">&#9881;</span> Settings
+        </button>
+      </nav>
+    </aside>
+    <!-- Main Content -->
+    <main class="main" id="main">
+      <!-- Dynamic content goes here -->
+    </main>
+  </div>
+
+  <!-- Modals / Screens go here -->
+  <div id="modal" class="modal hide">
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+  <div id="screen" class="screen hide">
+    <div class="screen-content" id="screenContent"></div>
+  </div>
+
+  <script>
+    // --- Data Simulation ---
+    const state = {
+      theme: localStorage.getItem("theme") || "light",
+      section: "dashboard",
+      users: [
+        {
+          id: 1,
+          name: "Alice",
+          username: "alice123",
+          email: "alice@mail.com",
+          password: "********",
+          referral: "alice123",
+          miningRatio: 1.2,
+          teamMembers: 4,
+          status: "active",
+          joined: "2025-07-11 09:17",
+          blocked: false,
+        },
+        {
+          id: 2,
+          name: "Bob",
+          username: "bob456",
+          email: "bob@mail.com",
+          password: "********",
+          referral: "alice123",
+          miningRatio: 1.0,
+          teamMembers: 2,
+          status: "inactive",
+          joined: "2025-07-15 14:33",
+          blocked: false,
+        },
+        {
+          id: 3,
+          name: "Charlie",
+          username: "charlie789",
+          email: "charlie@mail.com",
+          password: "********",
+          referral: "bob456",
+          miningRatio: 0.8,
+          teamMembers: 0,
+          status: "active",
+          joined: "2025-08-01 10:12",
+          blocked: true,
+        },
+      ],
+      kyc: [
+        {
+          id: 1,
+          username: "alice123",
+          email: "alice@mail.com",
+          type: "National Card",
+          status: "approved",
+          doc: {
+            firstName: "Alice",
+            lastName: "Smith",
+            familyName: "Smith",
+            nationality: "Pakistani",
+            language: "Urdu",
+            documentNumber: "123456789",
+            issueDate: "2021-01-10",
+            expiryDate: "2031-01-10",
+            dob: "1998-05-13",
+            cardFront: "https://placehold.co/220x130/009988/fff?text=Front+Card",
+            cardBack: "https://placehold.co/220x130/009988/fff?text=Back+Card",
+            selfie: "https://placehold.co/120x120/222/fff?text=Selfie",
+          },
+        },
+        {
+          id: 2,
+          username: "bob456",
+          email: "bob@mail.com",
+          type: "Passport",
+          status: "pending",
+          doc: {
+            firstName: "Bob",
+            lastName: "Johnson",
+            familyName: "Johnson",
+            nationality: "Pakistani",
+            language: "Urdu",
+            documentNumber: "A9876543",
+            issueDate: "2018-07-22",
+            expiryDate: "2028-07-22",
+            dob: "1995-09-29",
+            cardFront: "https://placehold.co/220x130/009988/fff?text=Passport",
+            cardBack: "",
+            selfie: "https://placehold.co/120x120/222/fff?text=Selfie",
+          },
+        },
+      ],
+      wallets: [
+        {
+          id: 1,
+          username: "alice123",
+          phrase: "apple banana cat dog eagle fish goat hat",
+          coins: 17.4,
+        },
+        {
+          id: 2,
+          username: "bob456",
+          phrase: "iron jet kite lemon moon nut owl pond",
+          coins: 3.2,
+        },
+      ],
+      transactions: [
+        {
+          sender: "alice123",
+          senderAddress: "0xA1B2C3",
+          amount: 2.4,
+          receiver: "bob456",
+          receiverAddress: "0xB4C5D6",
+          date: "2025-08-04 13:43"
+        },
+        {
+          sender: "bob456",
+          senderAddress: "0xB4C5D6",
+          amount: 1.4,
+          receiver: "charlie789",
+          receiverAddress: "0xC7D8E9",
+          date: "2025-08-07 15:02"
+        },
+      ],
+      settings: {
+        siteName: "Otter Coin",
+        officialEmail: "admin@ottercoin.com",
+        miningRatio: 1.1,
+        txFee: 0.02,
+        withdrawalFee: 0.04,
+      },
+      blocklist: [],
+    };
+
+    // --- Theme Logic ---
+    function setTheme(theme){
+      document.documentElement.setAttribute("data-theme", theme);
+      state.theme = theme;
+      localStorage.setItem("theme", theme);
+    }
+    setTheme(state.theme);
+
+    document.getElementById("themeToggleBtn").onclick = () => {
+      setTheme(state.theme === "light" ? "dark" : "light");
+      // Animation (moon rotates)
+      document.querySelector("#themeToggleBtn .moon").style.transform = "rotate(180deg)";
+      setTimeout(()=> {
+        document.querySelector("#themeToggleBtn .moon").style.transform = "";
+      }, 600);
+    };
+
+    // --- Loader animation ---
+    setTimeout(() => {
+      document.getElementById("loader").classList.add("hide");
+    }, 1200);
+
+    // --- Sidebar Navigation ---
+    document.querySelectorAll(".sidebar .option").forEach(opt => {
+      opt.onclick = function() {
+        document.querySelectorAll(".sidebar .option").forEach(o=>o.classList.remove("active"));
+        opt.classList.add("active");
+        showSection(opt.dataset.section);
+      };
+    });
+
+    // --- Section Rendering ---
+    function showSection(section){
+      state.section = section;
+      const main = document.getElementById("main");
+      main.innerHTML = "";
+      if(section === "dashboard") renderDashboard(main);
+      if(section === "users") renderUsers(main);
+      if(section === "kyc") renderKYC(main);
+      if(section === "wallet") renderWallet(main);
+      if(section === "transactions") renderTransactions(main);
+      if(section === "settings") renderSettings(main);
+    }
+
+    // --- Dashboard Section ---
+    function renderDashboard(main){
+      // Top bar: Theme toggle button is already present
+      const totalUsers = state.users.length;
+      const totalMined = state.wallets.reduce((sum,w)=>sum+w.coins,0).toFixed(2);
+      const activeUsers = state.users.filter(u=>u.status==="active" && !u.blocked).length;
+      const nonActiveUsers = state.users.filter(u=>u.status!=="active" && !u.blocked).length;
+      const totalKYCApproved = state.kyc.filter(k=>k.status==="approved").length;
+      const totalKYCPending = state.kyc.filter(k=>k.status==="pending").length;
+
+      main.innerHTML = `
+        <div class="top-bar flex justify-end align-center" style="min-height:40px;">
+          <span style="font-size:1.3em;color:var(--primary); font-weight:bold; letter-spacing:1px;">Welcome, Admin!</span>
+        </div>
+        <div class="section-title">Dashboard Overview</div>
+        <div class="dashboard-cards">
+          <div class="card" title="Total Users">
+            <div class="card-title">Total Users</div>
+            <div class="card-value">${totalUsers}</div>
+            <div class="card-icon">&#128100;</div>
+          </div>
+          <div class="card" title="Total Mined Coins">
+            <div class="card-title">Total Mined Coins</div>
+            <div class="card-value">${totalMined}</div>
+            <div class="card-icon">&#128176;</div>
+          </div>
+          <div class="card" title="Active Users">
+            <div class="card-title">Active Users</div>
+            <div class="card-value">${activeUsers}</div>
+            <div class="card-icon">&#9989;</div>
+          </div>
+          <div class="card" title="Non-Active Users">
+            <div class="card-title">Non-Active Users</div>
+            <div class="card-value">${nonActiveUsers}</div>
+            <div class="card-icon">&#10060;</div>
+          </div>
+          <div class="card" title="KYC Approved">
+            <div class="card-title">KYC Approved</div>
+            <div class="card-value">${totalKYCApproved}</div>
+            <div class="card-icon">&#128196;</div>
+          </div>
+          <div class="card" title="KYC Pending">
+            <div class="card-title">KYC Pending</div>
+            <div class="card-value">${totalKYCPending}</div>
+            <div class="card-icon">&#9203;</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Users Section ---
+    function renderUsers(main){
+      // Search Bar, Blocklist, Add New User, Table of users
+      main.innerHTML = `
+        <div class="top-bar flex justify-between align-center">
+          <div class="search"><input type="text" id="userSearch" placeholder="Search users..."></div>
+          <div class="flex">
+            <button class="btn btn-small" id="blocklistBtn">&#128683; Blocklist</button>
+            <button class="btn btn-small" id="addUserBtn">&#10010; Add New User</button>
+          </div>
+        </div>
+        <div class="section-title">Users</div>
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Username</th><th>Email</th><th>Mining Ratio</th>
+              <th>Team Members</th><th>Referral Link</th><th>Status</th>
+              <th>Joined</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            ${state.users.filter(u=>!u.blocked).map(u=>`
+              <tr class="row-anim">
+                <td>${u.username}</td>
+                <td>${u.email}</td>
+                <td>
+                  <span id="ratio_${u.id}">${u.miningRatio}</span>
+                  <button class="btn-small btn-secondary" onclick="editMiningRatio(${u.id})">Edit</button>
+                </td>
+                <td>${u.teamMembers}</td>
+                <td>
+                  <span>${location.origin}/ref/${u.referral}</span>
+                  <span class="copy-link" onclick="copyReferral('${u.referral}')">&#128203;</span>
+                </td>
+                <td><span class="${u.status==='active'?'status-active':'status-inactive'}">${u.status}</span></td>
+                <td>${u.joined}</td>
+                <td>
+                  <button class="btn-small btn-danger" onclick="blockUser(${u.id})">&#128683; Block</button>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+      document.getElementById("blocklistBtn").onclick = () => showBlocklist();
+      document.getElementById("addUserBtn").onclick = () => showAddUserScreen();
+      document.getElementById("userSearch").oninput = function(e){
+        filterUsersTable(e.target.value);
+      };
+      window.editMiningRatio = function(id){
+        const user = state.users.find(u=>u.id==id);
+        const span = document.getElementById(`ratio_${id}`);
+        span.innerHTML = `<input type="number" min="0.1" step="0.1" id="miningInput_${id}" value="${user.miningRatio}" style="width:52px;">`;
+        span.nextElementSibling.textContent = "Save";
+        span.nextElementSibling.onclick = function(){
+          const val = parseFloat(document.getElementById(`miningInput_${id}`).value);
+          user.miningRatio = val;
+          span.innerHTML = val;
+          span.nextElementSibling.textContent = "Edit";
+          span.nextElementSibling.onclick = ()=>window.editMiningRatio(id);
+        };
+      };
+      window.copyReferral = function(link){
+        navigator.clipboard.writeText(location.origin+"/ref/"+link);
+        alert("Referral link copied!");
+      };
+      window.blockUser = function(id){
+        const user = state.users.find(u=>u.id==id);
+        if(confirm("Block this user?")){
+          user.blocked = true;
+          state.blocklist.push(user);
+          showSection("users");
+        }
+      };
+    }
+    function filterUsersTable(search){
+      const tbody = document.getElementById("usersTableBody");
+      const rows = Array.from(tbody.children);
+      rows.forEach(row=>{
+        if(row.innerText.toLowerCase().includes(search.toLowerCase())) row.style.display="";
+        else row.style.display="none";
+      });
+    }
+    // Blocklist Screen
+    function showBlocklist(){
+      const blocklist = state.users.filter(u=>u.blocked);
+      document.getElementById("modal").classList.remove("hide");
+      document.getElementById("modalContent").innerHTML = `
+        <button class="modal-close" onclick="closeModal()">&#10006;</button>
+        <div class="section-title">Blocked Users</div>
+        <div class="search mb-2"><input type="text" id="blockSearch" placeholder="Search blocked users..."></div>
+        <table class="blocklist-table">
+          <thead>
+            <tr>
+              <th>Username</th><th>Email</th><th>Status</th><th>Joined</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="blocklistTableBody">
+            ${blocklist.map(u=>`
+              <tr class="row-anim">
+                <td>${u.username}</td>
+                <td>${u.email}</td>
+                <td><span class="${u.status==='active'?'status-active':'status-inactive'}">${u.status}</span></td>
+                <td>${u.joined}</td>
+                <td>
+                  <button class="btn-small btn-secondary" onclick="unblockUser(${u.id})">Unblock</button>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        <button class="btn btn-secondary" onclick="closeModal()">Back</button>
+      `;
+      document.getElementById("blockSearch").oninput = function(e){
+        filterBlocklistTable(e.target.value);
+      };
+      window.unblockUser = function(id){
+        const user = state.users.find(u=>u.id==id);
+        if(confirm("Unblock this user?")){
+          user.blocked = false;
+          showBlocklist();
+          showSection("users");
+        }
+      };
+      window.closeModal = function(){
+        document.getElementById("modal").classList.add("hide");
+        showSection("users");
+      };
+    }
+    function filterBlocklistTable(search){
+      const tbody = document.getElementById("blocklistTableBody");
+      const rows = Array.from(tbody.children);
+      rows.forEach(row=>{
+        if(row.innerText.toLowerCase().includes(search.toLowerCase())) row.style.display="";
+        else row.style.display="none";
+      });
+    }
+    // Add New User Screen
+    function showAddUserScreen(){
+      document.getElementById("screen").classList.remove("hide");
+      document.getElementById("screenContent").innerHTML = `
+        <button class="screen-close" onclick="closeScreen()">&#10006;</button>
+        <div class="section-title">Add New User</div>
+        <form id="addUserForm">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" required name="name">
+          </div>
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" required name="username">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" required name="email">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" required name="password">
+          </div>
+          <div class="form-group">
+            <label>Referral Link (username who referred)</label>
+            <input type="text" name="referral">
+          </div>
+          <button class="btn" type="submit">Add</button>
+          <button class="btn btn-secondary" type="button" onclick="closeScreen()">Back</button>
+        </form>
+      `;
+      document.getElementById("addUserForm").onsubmit = function(e){
+        e.preventDefault();
+        const form = e.target;
+        const newUser = {
+          id: Date.now(),
+          name: form.name.value,
+          username: form.username.value,
+          email: form.email.value,
+          password: form.password.value,
+          referral: form.referral.value,
+          miningRatio: 1.0,
+          teamMembers: 0,
+          status: "active",
+          joined: (new Date()).toISOString().slice(0,16).replace("T"," "),
+          blocked: false,
+        };
+        state.users.push(newUser);
+        // Update teamMembers for referral
+        if(newUser.referral){
+          const refUser = state.users.find(u=>u.username===newUser.referral);
+          if(refUser) refUser.teamMembers++;
+        }
+        closeScreen();
+        showSection("users");
+      };
+      window.closeScreen = function(){
+        document.getElementById("screen").classList.add("hide");
+      };
+    }
+
+    // --- KYC Section ---
+    function renderKYC(main){
+      main.innerHTML = `
+        <div class="top-bar flex justify-between align-center">
+          <div class="search"><input type="text" id="kycSearch" placeholder="Search KYC..."></div>
+        </div>
+        <div class="section-title">KYC Applications</div>
+        <table class="kyc-table">
+          <thead>
+            <tr>
+              <th>Username</th><th>Email</th><th>Document Type</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="kycTableBody">
+            ${state.kyc.map(k=>`
+              <tr class="row-anim">
+                <td>${k.username}</td>
+                <td>${k.email}</td>
+                <td>${k.type}</td>
+                <td>
+                  <span class="badge badge-${k.status}">${k.status}</span>
+                </td>
+                <td>
+                  <button class="btn-small btn-secondary" onclick="viewKYC(${k.id})">View</button>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+      document.getElementById("kycSearch").oninput = function(e){
+        filterKycTable(e.target.value);
+      };
+      window.viewKYC = function(id){
+        showKYCDetailScreen(id);
+      };
+    }
+    function filterKycTable(search){
+      const tbody = document.getElementById("kycTableBody");
+      const rows = Array.from(tbody.children);
+      rows.forEach(row=>{
+        if(row.innerText.toLowerCase().includes(search.toLowerCase())) row.style.display="";
+        else row.style.display="none";
+      });
+    }
+    function showKYCDetailScreen(id){
+      const kyc = state.kyc.find(k=>k.id==id);
+      document.getElementById("screen").classList.remove("hide");
+      document.getElementById("screenContent").innerHTML = `
+        <button class="screen-close" onclick="closeScreen()">&#10006;</button>
+        <div class="section-title">KYC Details</div>
+        <div class="mb-2">
+          <strong>Username:</strong> ${kyc.username} <br>
+          <strong>Email:</strong> ${kyc.email} <br>
+          <strong>Document Type:</strong> ${kyc.type}
+        </div>
+        <div class="mb-2">
+          <strong>First Name:</strong> ${kyc.doc.firstName} <br>
+          <strong>Last Name:</strong> ${kyc.doc.lastName} <br>
+          <strong>Family Name:</strong> ${kyc.doc.familyName} <br>
+          <strong>Nationality:</strong> ${kyc.doc.nationality} <br>
+          <strong>Language:</strong> ${kyc.doc.language} <br>
+          <strong>Document Number:</strong> ${kyc.doc.documentNumber} <br>
+          <strong>Issue Date:</strong> ${kyc.doc.issueDate} <br>
+          <strong>Expiry Date:</strong> ${kyc.doc.expiryDate} <br>
+          <strong>Date of Birth:</strong> ${kyc.doc.dob}
+        </div>
+        <div class="mb-2 flex">
+          ${kyc.type==="National Card"?`
+            <div>
+              <img src="${kyc.doc.cardFront}" alt="Front Pic" style="width:110px; cursor:pointer;" onclick="showPic('${kyc.doc.cardFront}', ${id})">
+              <p style="margin:0; font-size:.92em;">Front Pic</p>
+            </div>
+            <div>
+              <img src="${kyc.doc.cardBack}" alt="Back Pic" style="width:110px; cursor:pointer;" onclick="showPic('${kyc.doc.cardBack}', ${id})">
+              <p style="margin:0; font-size:.92em;">Back Pic</p>
+            </div>
+          `:""}
+          <div>
+            <img src="${kyc.doc.selfie}" alt="Selfie" style="width:70px; border-radius:50%; cursor:pointer;" onclick="showPic('${kyc.doc.selfie}',${id})">
+            <p style="margin:0; font-size:.92em;">Selfie</p>
+          </div>
+        </div>
+        <div class="flex justify-end mt-2">
+          <button class="btn btn-small" onclick="approveKYC(${id})">Approve</button>
+          <button class="btn btn-small btn-danger" onclick="rejectKYC(${id})">Reject</button>
+          <button class="btn btn-secondary btn-small" onclick="closeScreen()">Back</button>
+        </div>
+      `;
+      window.closeScreen = function(){
+        document.getElementById("screen").classList.add("hide");
+        showSection("kyc");
+      };
+      window.showPic = function(url, id){
+        document.getElementById("screenContent").innerHTML = `
+          <button class="screen-close" onclick="closePic(${id})">&#10006;</button>
+          <div style="text-align:center;">
+            <img src="${url}" alt="Document Pic" style="max-width:95%;max-height:60vh;border-radius:15px;">
+            <div class="mt-2">
+              <button class="btn btn-secondary btn-small" onclick="closePic(${id})">Back</button>
+            </div>
+          </div>
+        `;
+        window.closePic = function(id){
+          showKYCDetailScreen(id);
+        };
+      };
+      window.approveKYC = function(id){
+        if(confirm("Approve this KYC?")){
+          const kyc = state.kyc.find(k=>k.id==id);
+          kyc.status = "approved";
+          closeScreen();
+          showSection("kyc");
+        }
+      };
+      window.rejectKYC = function(id){
+        if(confirm("Reject this KYC?")){
+          const kyc = state.kyc.find(k=>k.id==id);
+          kyc.status = "rejected";
+          closeScreen();
+          showSection("kyc");
+        }
+      };
+    }
+
+    // --- Wallet Section ---
+    function renderWallet(main){
+      main.innerHTML = `
+        <div class="top-bar flex justify-between align-center">
+          <div class="search"><input type="text" id="walletSearch" placeholder="Search wallet..."></div>
+        </div>
+        <div class="section-title">Wallets</div>
+        <table class="wallet-table">
+          <thead>
+            <tr>
+              <th>Username</th><th>Phrase</th><th>Coins</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="walletTableBody">
+            ${state.wallets.map(w=>`
+              <tr class="row-anim">
+                <td>${w.username}</td>
+                <td>${w.phrase}</td>
+                <td>
+                  <span id="coins_${w.id}">${w.coins}</span>
+                  <button class="btn-small btn-secondary" onclick="editCoins(${w.id})">Edit</button>
+                </td>
+                <td></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+      document.getElementById("walletSearch").oninput = function(e){
+        filterWalletTable(e.target.value);
+      };
+      window.editCoins = function(id){
+        const wallet = state.wallets.find(w=>w.id==id);
+        const span = document.getElementById(`coins_${id}`);
+        span.innerHTML = `<input type="number" min="0" step="0.01" id="coinsInput_${id}" value="${wallet.coins}" style="width:62px;">`;
+        span.nextElementSibling.textContent = "Save";
+        span.nextElementSibling.onclick = function(){
+          const val = parseFloat(document.getElementById(`coinsInput_${id}`).value);
+          wallet.coins = val;
+          span.innerHTML = val;
+          span.nextElementSibling.textContent = "Edit";
+          span.nextElementSibling.onclick = ()=>window.editCoins(id);
+        };
+      };
+    }
+    function filterWalletTable(search){
+      const tbody = document.getElementById("walletTableBody");
+      const rows = Array.from(tbody.children);
+      rows.forEach(row=>{
+        if(row.innerText.toLowerCase().includes(search.toLowerCase())) row.style.display="";
+        else row.style.display="none";
+      });
+    }
+
+    // --- Transactions Section ---
+    function renderTransactions(main){
+      main.innerHTML = `
+        <div class="top-bar flex justify-between align-center">
+          <div class="search"><input type="text" id="txSearch" placeholder="Search transactions..."></div>
+        </div>
+        <div class="section-title">Transaction History</div>
+        <table class="tx-table">
+          <thead>
+            <tr>
+              <th>Sender</th><th>Sender Address</th>
+              <th>Amount</th>
+              <th>Receiver</th><th>Receiver Address</th>
+              <th>Date/Time</th>
+            </tr>
+          </thead>
+          <tbody id="txTableBody">
+            ${state.transactions.map(t=>`
+              <tr class="row-anim">
+                <td>${t.sender}</td>
+                <td>${t.senderAddress}</td>
+                <td>${t.amount}</td>
+                <td>${t.receiver}</td>
+                <td>${t.receiverAddress}</td>
+                <td>${t.date}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+      document.getElementById("txSearch").oninput = function(e){
+        filterTxTable(e.target.value);
+      };
+    }
+    function filterTxTable(search){
+      const tbody = document.getElementById("txTableBody");
+      const rows = Array.from(tbody.children);
+      rows.forEach(row=>{
+        if(row.innerText.toLowerCase().includes(search.toLowerCase())) row.style.display="";
+        else row.style.display="none";
+      });
+    }
+
+    // --- Settings Section ---
+    function renderSettings(main){
+      main.innerHTML = `
+        <div class="section-title">Settings</div>
+        <form id="settingsForm">
+          <div class="form-group">
+            <label>Website Name</label>
+            <input type="text" name="siteName" value="${state.settings.siteName}" disabled>
+          </div>
+          <div class="form-group">
+            <label>Official Email</label>
+            <input type="email" name="officialEmail" value="${state.settings.officialEmail}">
+          </div>
+          <div class="form-group">
+            <label>Mining Ratio (Default for all users)</label>
+            <input type="number" step="0.01" name="miningRatio" value="${state.settings.miningRatio}">
+          </div>
+          <div class="form-group">
+            <label>Transaction Fee (%)</label>
+            <input type="number" step="0.01" name="txFee" value="${state.settings.txFee}">
+          </div>
+          <div class="form-group">
+            <label>Withdrawal Fee (%)</label>
+            <input type="number" step="0.01" name="withdrawalFee" value="${state.settings.withdrawalFee}">
+          </div>
+          <div class="flex mt-2">
+            <button class="btn" type="submit">Save</button>
+            <button class="btn btn-danger" type="button" onclick="logout()">Logout</button>
+          </div>
+        </form>
+      `;
+      document.getElementById("settingsForm").onsubmit = function(e){
+        e.preventDefault();
+        const form = e.target;
+        state.settings.officialEmail = form.officialEmail.value;
+        state.settings.miningRatio = parseFloat(form.miningRatio.value);
+        state.settings.txFee = parseFloat(form.txFee.value);
+        state.settings.withdrawalFee = parseFloat(form.withdrawalFee.value);
+        alert("Settings saved!");
+      };
+      window.logout = function(){
+        if(confirm("Logout?")){
+          location.reload();
+        }
+      };
+    }
+
+    // --- Initial Load ---
+    showSection(state.section);
+
+    // --- Hide modals/screens on outside click ---
+    document.getElementById("modal").onclick = function(e){
+      if(e.target === this) this.classList.add("hide");
+    };
+    document.getElementById("screen").onclick = function(e){
+      if(e.target === this) this.classList.add("hide");
+    };
+  </script>
+</body>
+</html>

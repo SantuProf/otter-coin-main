@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <title>Send Otter Coin | Otter Coin</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --secondary: #38b2ac;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+            --error: #e53e3e;
+            --success: #48bb78;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .send-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(26, 32, 44, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .send-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .send-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 20, 30, 0.7);
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.3);
+        }
+        
+        .amount-controls {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .max-btn {
+            margin-left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            background: rgba(56, 178, 172, 0.2);
+            color: var(--secondary);
+            border: none;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .balance-info {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+        
+        .send-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(43, 108, 176, 0.4);
+        }
+        
+        .send-btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        /* Crypto decorations */
+        .crypto-decoration {
+            position: fixed;
+            opacity: 0.1;
+            z-index: -1;
+            font-size: 3rem;
+        }
+        
+        .decoration-1 {
+            top: 20%;
+            left: 10%;
+        }
+        
+        .decoration-2 {
+            bottom: 15%;
+            right: 10%;
+        }
+    </style>
+</head>
+<body>
+     <div class="button" onclick="window.location.href='profile.html'">
+        <i class="fa-solid fa-arrow-left"></i>
+    </div>
+    <!-- Crypto-themed background decorations -->
+    <div class="crypto-decoration decoration-1">Ξ</div>
+    <div class="crypto-decoration decoration-2">₿</div>
+    
+    <div class="send-container">
+        <div class="send-header">
+            <h1>Send Otter</h1>
+            <p>Transfer Otter Coins to another wallet</p>
+        </div>
+        
+        <form id="sendForm">
+            <div class="input-group">
+                <label for="walletAddress">Wallet Address</label>
+                <input type="text" id="walletAddress" required placeholder="0x...">
+                <div class="error-message" id="addressError">Invalid wallet address</div>
+            </div>
+            
+            <div class="input-group">
+                <label for="amount">Amount</label>
+                <input type="number" id="amount" required placeholder="0.00" step="0.01" min="0">
+                <div class="amount-controls">
+                    <span style="font-size: 0.8rem;">OTTR</span>
+                    <button type="button" class="max-btn" id="maxBtn">Max</button>
+                </div>
+                <div class="error-message" id="amountError">Amount exceeds balance</div>
+            </div>
+            
+            <div class="balance-info">
+                Total Balance: <span id="availableBalance">320.00</span> OTTR
+            </div>
+            
+            <button type="submit" class="send-btn" id="sendBtn">Send</button>
+        </form>
+    </div>
+
+    <script>
+        // DOM Elements
+        const sendForm = document.getElementById('sendForm');
+        const walletAddress = document.getElementById('walletAddress');
+        const amountInput = document.getElementById('amount');
+        const maxBtn = document.getElementById('maxBtn');
+        const availableBalance = document.getElementById('availableBalance');
+        const sendBtn = document.getElementById('sendBtn');
+        const addressError = document.getElementById('addressError');
+        const amountError = document.getElementById('amountError');
+        
+        // Current balance (would come from blockchain in real app)
+        const currentBalance = 320.00;
+        
+        // Set max amount
+        maxBtn.addEventListener('click', function() {
+            amountInput.value = currentBalance.toFixed(2);
+            validateAmount();
+        });
+        
+        // Basic wallet address validation
+        function validateAddress() {
+            // In real app, use proper blockchain address validation
+            const isValid = walletAddress.value.length > 10; // Simplified check
+            addressError.style.display = isValid ? 'none' : 'block';
+            return isValid;
+        }
+        
+        // Amount validation
+        function validateAmount() {
+            const amount = parseFloat(amountInput.value);
+            const isValid = amount > 0 && amount <= currentBalance;
+            amountError.style.display = isValid ? 'none' : 'block';
+            return isValid;
+        }
+        
+        // Validate form on input
+        walletAddress.addEventListener('input', validateAddress);
+        amountInput.addEventListener('input', validateAmount);
+        
+        // Form submission
+        sendForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (validateAddress() && validateAmount()) {
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'Sending...';
+                
+                // In real implementation:
+                // 1. Create blockchain transaction
+                // 2. Show transaction hash
+                // 3. Redirect to transaction status
+                
+                console.log('Sending:', {
+                    to: walletAddress.value,
+                    amount: amountInput.value
+                });
+                
+                // Simulate transaction delay
+                setTimeout(() => {
+                    alert(`Successfully sent ${amountInput.value} OTTR to ${walletAddress.value}`);
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            }
+        });
+        
+        // In production, you would:
+        // 1. Use Web3.js/ethers.js for real transactions
+        // 2. Validate addresses properly for your blockchain
+        // 3. Handle gas fees and transaction confirmation
+        // 4. Show transaction progress
+        
+        // Example real implementation:
+        /*
+        async function sendTransaction() {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const tx = await signer.sendTransaction({
+                to: walletAddress.value,
+                value: ethers.utils.parseEther(amountInput.value)
+            });
+            return tx.wait();
+        }
+        */
+    </script>
+</body>
+</html>

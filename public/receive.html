@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Receive Otter Coin | Otter Coin</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --secondary: #38b2ac;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .receive-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(26, 32, 44, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .receive-header {
+            margin-bottom: 2rem;
+        }
+        
+        .receive-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .receive-header h2 {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-top: 1.5rem;
+        }
+        
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            /* Placeholder for QR code - would be generated in real app */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            font-size: 0.8rem;
+        }
+        
+        .address-container {
+            background: rgba(15, 20, 30, 0.7);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            word-break: break-all;
+            font-family: monospace;
+        }
+        
+        .copy-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(43, 108, 176, 0.4);
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--dark);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            border: 1px solid var(--primary);
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Crypto decorations */
+        .crypto-decoration {
+            position: fixed;
+            opacity: 0.1;
+            z-index: -1;
+            font-size: 3rem;
+        }
+        
+        .decoration-1 {
+            top: 20%;
+            left: 10%;
+        }
+        
+        .decoration-2 {
+            bottom: 15%;
+            right: 10%;
+        }
+    </style>
+</head>
+<body>
+     <div class="button" onclick="window.location.href='walletdashboard.html'">
+        <i class="fa-solid fa-arrow-left"></i>
+    </div>
+    <!-- Crypto-themed background decorations -->
+    <div class="crypto-decoration decoration-1">Ξ</div>
+    <div class="crypto-decoration decoration-2">₿</div>
+    
+    <div class="receive-container">
+        <div class="receive-header">
+            <h1>Receive</h1>
+            <h2>Otter Address</h2>
+            
+            <!-- QR Code Placeholder -->
+            <div class="qr-code">
+                QR Code Generator<br>Would Appear Here
+            </div>
+        </div>
+        
+        <div class="address-container" id="walletAddress">
+            0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+        </div>
+        
+        <button class="copy-btn tooltip" id="copyBtn">
+            <span>Copy Address</span>
+            <span class="tooltiptext">Address copied!</span>
+        </button>
+        
+        <div style="color: var(--gray); font-size: 0.9rem;">
+            Share this address to receive Otter Coins
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const walletAddress = document.getElementById('walletAddress');
+        const copyBtn = document.getElementById('copyBtn');
+        const tooltip = document.querySelector('.tooltiptext');
+        
+        // In a real app, this would come from the user's wallet
+         async function getWalletAddress() {
+             const provider = new ethers.providers.Web3Provider(window.ethereum);
+             const signer = provider.getSigner();
+             return await signer.getAddress();
+         }
+        
+        // Copy address to clipboard
+        copyBtn.addEventListener('click', function() {
+            const text = walletAddress.textContent.trim();
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    tooltip.textContent = 'Address copied!';
+                })
+                .catch(err => {
+                    tooltip.textContent = 'Failed to copy';
+                    console.error('Failed to copy: ', err);
+                });
+        });
+        
+        // In production, you would:
+        // 1. Generate QR code from wallet address
+        // 2. Get actual wallet address from connected wallet
+        // 3. Implement share functionality
+        
+        // Example QR code generation:
+        
+        function generateQRCode(address) {
+            const qrcode = new QRCode(document.querySelector('.qr-code'), {
+                text: address,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+        document.getElementById('shareBtn').addEventListener('click', async () => {
+    try {
+        await navigator.share({
+            title: 'My Otter Coin Address',
+            text: 'Send me Otter Coins at this address:',
+            url: `ottercoin:${walletAddress}`
+        });
+    } catch (err) {
+        // Fallback for browsers without Web Share API
+        copyAddress();
+        alert('Address copied to clipboard. You can share it manually.');
+    }
+});
+    </script>
+</body>
+</html>

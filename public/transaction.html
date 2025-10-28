@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <title>Transaction History | Otter Coin</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --secondary: #38b2ac;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+            --dark-gray: #4a5568;
+            --success: #48bb78;
+            --error: #e53e3e;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .history-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(26, 32, 44, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .history-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-header h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .search-bar {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 8px 0 0 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 20, 30, 0.7);
+            color: var(--light);
+            font-size: 0.9rem;
+        }
+        
+        .search-bar button {
+            padding: 0 1rem;
+            border-radius: 0 8px 8px 0;
+            border: none;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+        }
+        
+        .transactions {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .transaction-info {
+            flex: 1;
+        }
+        
+        .transaction-type {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .transaction-date {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .transaction-amount {
+            font-weight: 600;
+        }
+        
+        .incoming {
+            color: var(--success);
+        }
+        
+        .outgoing {
+            color: var(--error);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--gray);
+        }
+        
+        /* Crypto decorations */
+        .crypto-decoration {
+            position: fixed;
+            opacity: 0.1;
+            z-index: -1;
+            font-size: 3rem;
+        }
+        
+        .decoration-1 {
+            top: 20%;
+            left: 10%;
+        }
+        
+        .decoration-2 {
+            bottom: 15%;
+            right: 10%;
+        }
+        
+        /* Scrollbar styling */
+        .transactions::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .transactions::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+        
+        .transactions::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="button" onclick="window.location.href='transaction&phrase.html'">
+        <i class="fa-solid fa-arrow-left"></i>
+    </div>
+    <!-- Crypto-themed background decorations -->
+    <div class="crypto-decoration decoration-1">Ξ</div>
+    <div class="crypto-decoration decoration-2">₿</div>
+    
+    <div class="history-container">
+        <div class="history-header">
+            <h1>Transaction History</h1>
+        </div>
+        
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search transactions...">
+            <button id="searchBtn">🔍</button>
+        </div>
+        
+        <div class="transactions" id="transactionsList">
+            <!-- Transactions will be loaded here -->
+            <div class="empty-state">No transactions found</div>
+        </div>
+    </div>
+
+    <script>
+        // Sample transaction data (in real app, this would come from blockchain)
+        const transactions = [
+            {
+                id: '1',
+                type: 'Received',
+                from: '0x3f...7d4a',
+                amount: 50.00,
+                date: '2025-06-10 14:30',
+                status: 'Completed'
+            },
+            {
+                id: '2',
+                type: 'Sent',
+                to: '0x8b...2e9f',
+                amount: 20.50,
+                date: '2025-06-09 09:15',
+                status: 'Completed'
+            },
+            {
+                id: '3',
+                type: 'Mining Reward',
+                from: 'Network',
+                amount: 5.25,
+                date: '2025-06-08 00:45',
+                status: 'Completed'
+            }
+        ];
+
+        // DOM Elements
+        const transactionsList = document.getElementById('transactionsList');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        
+        // Render transactions
+        function renderTransactions(filter = '') {
+            const filtered = transactions.filter(tx => 
+                tx.type.toLowerCase().includes(filter.toLowerCase()) ||
+                (tx.from && tx.from.toLowerCase().includes(filter.toLowerCase())) ||
+                (tx.to && tx.to.toLowerCase().includes(filter.toLowerCase())) ||
+                tx.amount.toString().includes(filter)
+            );
+            
+            if (filtered.length === 0) {
+                transactionsList.innerHTML = '<div class="empty-state">No transactions found</div>';
+                return;
+            }
+            
+            transactionsList.innerHTML = '';
+            
+            filtered.forEach(tx => {
+                const txElement = document.createElement('div');
+                txElement.className = 'transaction';
+                
+                const isIncoming = tx.type === 'Received' || tx.type === 'Mining Reward';
+                
+                txElement.innerHTML = `
+                    <div class="transaction-info">
+                        <div class="transaction-type">${tx.type}</div>
+                        <div class="transaction-date">${tx.date}</div>
+                    </div>
+                    <div class="transaction-amount ${isIncoming ? 'incoming' : 'outgoing'}">
+                        ${isIncoming ? '+' : '-'}${tx.amount} OTTR
+                    </div>
+                `;
+                
+                // Add click handler for transaction details
+                txElement.addEventListener('click', () => {
+                    showTransactionDetails(tx);
+                });
+                
+                transactionsList.appendChild(txElement);
+            });
+        }
+        
+        // Show transaction details (would be a modal in full implementation)
+        function showTransactionDetails(tx) {
+            let details = `
+                <strong>Type:</strong> ${tx.type}<br>
+                <strong>Amount:</strong> ${tx.amount} OTTR<br>
+                <strong>Date:</strong> ${tx.date}<br>
+                <strong>Status:</strong> ${tx.status}<br>
+            `;
+            
+            if (tx.from) details += `<strong>From:</strong> ${tx.from}<br>`;
+            if (tx.to) details += `<strong>To:</strong> ${tx.to}<br>`;
+            
+            alert(details);
+        }
+        
+        // Search functionality
+        searchBtn.addEventListener('click', () => {
+            renderTransactions(searchInput.value.trim());
+        });
+        
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                renderTransactions(searchInput.value.trim());
+            }
+        });
+        
+        // Initial render
+        renderTransactions();
+        
+        // In production, you would:
+        // 1. Fetch real transactions from blockchain
+        // 2. Implement pagination for large histories
+        // 3. Add filtering by date/amount/type
+        // 4. Show transaction confirmation details
+        
+        // Example real implementation:
+        
+        async function loadTransactions() {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const address = await provider.getSigner().getAddress();
+            
+            // For ERC-20 tokens (Otter Coin would be a token contract)
+            const contract = new ethers.Contract(OTTER_ADDRESS, OTTER_ABI, provider);
+            const filter = contract.filters.Transfer(null, address); // Incoming
+            const incoming = await contract.queryFilter(filter);
+            
+            const outgoingFilter = contract.filters.Transfer(address, null);
+            const outgoing = await contract.queryFilter(outgoingFilter);
+            
+            // Process and display transactions...
+        }
+        
+    </script>
+</body>
+</html>

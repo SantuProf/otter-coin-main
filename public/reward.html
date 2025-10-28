@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Rewards | Otter Coin</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --secondary: #38b2ac;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+            --success: #48bb78;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .rewards-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(26, 32, 44, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .rewards-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .rewards-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .tasks-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .task-checkbox {
+            margin-right: 1rem;
+            width: 20px;
+            height: 20px;
+            accent-color: var(--secondary);
+        }
+        
+        .task-label {
+            flex: 1;
+        }
+        
+        .claim-section {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .claim-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        
+        .claim-btn {
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .claim-btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .claim-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(43, 108, 176, 0.4);
+        }
+        
+        /* Crypto decorations */
+        .crypto-decoration {
+            position: fixed;
+            opacity: 0.1;
+            z-index: -1;
+            font-size: 3rem;
+        }
+        
+        .decoration-1 {
+            top: 20%;
+            left: 10%;
+        }
+        
+        .decoration-2 {
+            bottom: 15%;
+            right: 10%;
+        }
+        a{
+            text-decoration: none;
+            color: white;
+        }
+        nav{
+           margin-top: 20px;
+            padding: 0%;
+
+        }
+       nav ul{
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            background-color: aliceblue;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        li{
+            list-style-type: none;
+            background-color: rgba(15, 20, 30, 1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            align-items: center;
+            text-align: center;
+        }
+        @media (max-width: 480px) {
+          nav ul{
+            display: grid;
+            grid-template-columns: repeat(2, 2fr);
+            background-color: aliceblue;
+            padding: 20px;
+            border-radius: 10px;
+        } 
+      }
+    </style>
+</head>
+<body>
+    <!-- Crypto-themed background decorations -->
+    <div class="crypto-decoration decoration-1">Ξ</div>
+    <div class="crypto-decoration decoration-2">₿</div>
+    
+    <div class="rewards-container">
+        <div class="rewards-header">
+            <h1>Rewards</h1>
+            <p>Complete tasks to earn Otter Coins</p>
+        </div>
+        
+       <ul class="tasks-list" id="tasksList">
+  <li class="task-item">
+    <input type="checkbox" class="task-checkbox" id="taskX">
+    <label for="taskX" class="task-label">
+      <a href="https://x.com/otter__coin?t=X7ZRe1bUSlt1lfh99YB-4w&s=09" target="_blank" onclick="checkTask('taskX')">Follow us on X (Twitter)</a>
+    </label>
+  </li>
+  <li class="task-item">
+    <input type="checkbox" class="task-checkbox" id="taskInstagram">
+    <label for="taskInstagram" class="task-label">
+      <a href="https://www.instagram.com/otter_coin?igsh=MTgzcDI4dGd4NWJ5Nw==" target="_blank" onclick="checkTask('taskInstagram')">Follow us on Instagram</a>
+    </label>
+  </li>
+  <li class="task-item">
+    <input type="checkbox" class="task-checkbox" id="taskFacebook">
+    <label for="taskFacebook" class="task-label">
+      <a href="https://www.facebook.com/share/1EqfhYE12Z/" target="_blank" onclick="checkTask('taskFacebook')">Follow us on Facebook</a>
+    </label>
+  </li>
+  <li class="task-item">
+    <input type="checkbox" class="task-checkbox" id="taskYouTube">
+    <label for="taskYouTube" class="task-label">
+      <a href="https://www.youtube.com/@The_otter_coin" target="_blank" onclick="checkTask('taskYouTube')">Subscribe our YouTube Channel</a>
+    </label>
+  </li>
+  <li class="task-item">
+    <input type="checkbox" class="task-checkbox" id="taskTelegram">
+    <label for="taskTelegram" class="task-label">
+      <a href="https://t.me/Otter_Coin1604" target="_blank" onclick="checkTask('taskTelegram')">Follow us on Telegram</a>
+    </label>
+  </li>
+</ul>
+        
+        <div class="claim-section">
+            <div class="claim-amount">Claim 50 Otter Coins</div>
+            <button class="claim-btn" id="claimBtn" disabled>Claim Reward</button>
+        </div>
+    </div>
+ <nav>
+        <ul style="cursor: pointer;">
+            <li onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-house" style="color: #ffffff;"></i></li>
+            <li onclick="window.location.href='invite.html'"><i class="fas fa-user-plus" style="color: #ffffff;"></i></li>
+            <li onclick="window.location.href='reward.html'"><i class="fa-solid fa-gift" style="color: #24deff;"></i></li>
+            <li onclick="window.location.href='profile.html'"><i class="fa-solid fa-user" style="color: #ffffff;"></i></li>    
+        </ul>
+    </nav>
+    <script>
+    
+        // DOM Elements
+        const checkboxes = document.querySelectorAll('.task-checkbox');
+        const claimBtn = document.getElementById('claimBtn');
+        
+        // Check if all tasks are completed
+        function checkTasks() {
+            const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+            claimBtn.disabled = !allChecked;
+        }
+        
+        // Add event listeners to all checkboxes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', checkTasks);
+            
+            // Simulate task completion (in real app, this would verify actual follows)
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    // In real implementation, verify the user actually followed
+                    console.log(`Task ${this.id} completed`);
+                }
+            });
+        });
+        
+        // Claim reward functionality
+        claimBtn.addEventListener('click', function() {
+            // Get current balance from storage
+            let userData = JSON.parse(sessionStorage.getItem('currentUser')) || { balance: 0 };
+            
+            // Add reward coins
+            userData.balance = (parseFloat(userData.balance) || 0) + 40;
+            
+            // Update storage
+            sessionStorage.setItem('currentUser', JSON.stringify(userData));
+            
+            // Disable checkboxes and claim button
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+                checkbox.disabled = true;
+            });
+            claimBtn.disabled = true;
+            claimBtn.textContent = 'Reward Claimed!';
+            
+            alert('50 Otter Coins have been added to your balance!');
+            
+            // In real implementation, you would:
+            // 1. Verify all tasks were actually completed
+            // 2. Update balance on your backend
+            // 3. Mark these rewards as claimed in database
+        });
+        
+        // Initialize - check if rewards were already claimed
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(sessionStorage.getItem('currentUser')) || {};
+            if (userData.rewardsClaimed) {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                    checkbox.disabled = true;
+                });
+                claimBtn.disabled = true;
+                claimBtn.textContent = 'Reward Claimed!';
+            }
+        });
+    </script>
+</body>
+</html>
