@@ -1,0 +1,201 @@
+/* CreateWalletPage.module.css */
+:root {
+  --primary: #2b6cb0;
+  --secondary: #38b2ac;
+  --dark: #1a202c;
+  --light: #f7fafc;
+  --gray: #e2e8f0;
+  --dark-gray: #4a5568;
+}
+
+.backupContainer {
+  box-sizing: border-box;
+  max-width: 560px;
+  width: 100%;
+  margin: 3vh auto;
+  position: relative;
+  background: rgba(26, 32, 44, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.backupHeader {
+  margin-bottom: 2rem;
+}
+
+.backupHeader h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--light);
+}
+
+.backupHeader p {
+  color: var(--gray);
+  line-height: 1.5;
+}
+
+.recoveryPhrase {
+  background: rgba(15, 20, 30, 0.7);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: monospace;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  /* allow long phrases to wrap safely without breaking words awkwardly */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: pre-wrap; /* preserve spacing */
+}
+
+.warningBox {
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.warningBox ul {
+  padding-left: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--dark-gray);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 0; /* allow shrinking in flex container */
+}
+
+.actionBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.actionBtnPrimary {
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  width: auto;
+  max-width: 220px;
+  background-color: var(--dark);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.8rem;
+  border: 1px solid var(--primary);
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.cryptoDecoration {
+  position: fixed;
+  opacity: 0.1;
+  z-index: -1;
+  font-size: 3rem;
+}
+
+.decoration1 {
+  top: 20%;
+  left: 10%;
+}
+
+.decoration2 {
+  bottom: 15%;
+  right: 10%;
+}
+
+.button {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--light);
+}
+
+@media (max-width: 600px) {
+  .backupContainer {
+    max-width: 92vw;
+    padding: 1.25rem;
+    margin: 1.5rem auto;
+  }
+  .recoveryPhrase {
+    font-size: 1rem;
+    line-height: 1.6;
+    padding: 1rem;
+  }
+  .actionButtons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .actionBtn {
+    width: 100%;
+  }
+  .tooltiptext {
+    left: auto;
+    right: 8px;
+    transform: none;
+  }
+  .cryptoDecoration { display: none; }
+  .button { top: 1rem; left: 1rem; }
+}
+
+@media (min-width: 900px) {
+  .backupContainer {
+    max-width: 720px;
+    padding: 2.5rem 3rem;
+  }
+  .recoveryPhrase {
+    font-size: 1.15rem;
+    line-height: 1.9;
+  }
+  .actionBtn {
+    font-size: 1rem;
+    padding: 0.9rem 1rem;
+  }
+}

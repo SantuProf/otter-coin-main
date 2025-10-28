@@ -1,0 +1,225 @@
+:root {
+  --primary: #2b6cb0;
+  --secondary: #38b2ac;
+  --dark: #1a202c;
+  --light: #f7fafc;
+  --gray: #e2e8f0;
+  --dark-gray: #4a5568;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.body {
+  background-color: var(--dark);
+  color: var(--light);
+  min-height: 100vh;
+  padding: 1rem;
+  position: relative;
+}
+
+.referralContainer {
+  max-width: 500px;
+  margin: 1rem auto;
+  background: rgba(26, 32, 44, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+@media (min-width: 501px) {
+  .profileContainer {
+    min-width: 500px;
+  }
+}
+
+@media (min-width: 400px) {
+  .profileContainer {
+    min-width: 380px;
+  }
+}
+
+.referralHeader {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.referralHeader h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.referralHeader p {
+  color: var(--gray);
+}
+
+.referralLinkContainer {
+  background: rgba(15, 20, 30, 0.7);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.referralLinkContainer h2 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: var(--secondary);
+}
+
+.referralLink {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.referralLink input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  color: var(--light);
+  font-size: 0.9rem;
+}
+
+.referralLink input:focus {
+  outline: none;
+}
+
+.referralActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.referralBtn {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.referralBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(43, 108, 176, 0.4);
+}
+
+.referralBtn.secondary {
+  background: var(--dark-gray);
+}
+
+.teamMembers {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.teamMembers h2 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: var(--secondary);
+}
+
+.memberList {
+  list-style: none;
+  display: block;
+  width: 100%;
+}
+
+.memberItem {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.memberNumber {
+  width: 24px;
+  height: 24px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 0.8rem;
+}
+
+.memberName {
+  flex: 1;
+}
+
+.memberStatus {
+  color: var(--gray);
+  font-size: 0.8rem;
+}
+
+/* Crypto decorations */
+.cryptoDecoration {
+  position: fixed;
+  opacity: 0.1;
+  z-index: -1;
+  font-size: 3rem;
+}
+
+.decoration1 {
+  top: 20%;
+  left: 10%;
+}
+
+.decoration2 {
+  bottom: 15%;
+  right: 10%;
+}
+
+/* Tooltip */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: var(--dark);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.8rem;
+  border: 1px solid var(--primary);
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

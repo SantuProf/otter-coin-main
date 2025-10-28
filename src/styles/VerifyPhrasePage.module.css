@@ -1,0 +1,192 @@
+/* VerifyPhrasePage.module.css */
+:root {
+  --primary: #2b6cb0;
+  --secondary: #38b2ac;
+  --dark: #1a202c;
+  --light: #f7fafc;
+  --gray: #e2e8f0;
+  --error: #e53e3e;
+  --success: #48bb78;
+}
+
+.verificationContainer {
+  box-sizing: border-box;
+  max-width: 520px;
+  position: relative;
+  width: 100%;
+  background: rgba(26, 32, 44, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  margin: 3vh auto;
+}
+
+.verificationHeader {
+  margin-bottom: 2rem;
+}
+
+.verificationHeader h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--light);
+}
+
+.verificationHeader p {
+  color: var(--gray);
+  line-height: 1.5;
+}
+
+.wordChecks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.wordCheck {
+  text-align: left;
+}
+
+.wordCheck label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--gray);
+  font-size: 0.9rem;
+}
+
+.wordCheck input {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: rgba(15, 20, 30, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--light);
+  box-sizing: border-box;
+  min-width: 0; /* allow input to shrink inside grid */
+}
+
+.wordCheck input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.continueBtn {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.continueBtn:disabled {
+  background: var(--gray);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.continueBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(43, 108, 176, 0.4);
+}
+
+.errorMessage {
+  color: var(--error);
+  margin-top: 1rem;
+  display: none;
+}
+
+.cryptoDecoration {
+  position: fixed;
+  opacity: 0.1;
+  z-index: -1;
+  font-size: 3rem;
+}
+
+.decoration1 {
+  top: 20%;
+  left: 10%;
+}
+
+.decoration2 {
+  bottom: 15%;
+  right: 10%;
+}
+
+.back {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--light);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.verificationContainer .back {
+  /* slightly increase contrast on the card */
+  color: var(--light);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .verificationContainer {
+    padding: 1.25rem;
+    max-width: 92vw;
+    margin: 1.5rem auto;
+  }
+  .wordChecks {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .verificationHeader h1 {
+    font-size: 1.25rem;
+  }
+  .wordCheck input {
+    padding: 0.65rem;
+  }
+  .continueBtn {
+    padding: 0.7rem;
+  }
+  .cryptoDecoration { display: none; }
+}
+
+@media (max-width: 360px) {
+  .verificationContainer {
+    padding: 0.9rem;
+    border-radius: 12px;
+  }
+  .verificationHeader h1 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .verificationContainer {
+    max-width: 640px;
+    padding: 3rem 3.5rem;
+    margin: 6vh auto;
+  }
+  .wordChecks {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+  .continueBtn {
+    width: auto;
+    max-width: 360px;
+    margin: 1.25rem auto 0 auto;
+    padding: 0.95rem 1.25rem;
+    font-size: 1.05rem;
+  }
+}

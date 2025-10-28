@@ -1,0 +1,138 @@
+/* Styles for the Front ID Upload Page */
+:root {
+  --primary: #2b6cb0;
+  --secondary: #38b2ac;
+  --dark: #1a202c;
+  --light: #f7fafc;
+  --gray: #e2e8f0;
+  --dark-gray: #4a5568;
+}
+
+.uploadContainer {
+  max-width: 500px;
+  width: 100%;
+  background: rgba(26, 32, 44, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.uploadHeader {
+  margin-bottom: 1.5rem;
+}
+
+.uploadTitle {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.uploadDescription {
+  color: var(--gray);
+}
+
+.dropZone {
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dropZone:hover {
+  border-color: var(--primary);
+  background: rgba(43, 108, 176, 0.1);
+}
+
+.dropZoneActive {
+  border-color: var(--primary);
+  background: rgba(43, 108, 176, 0.2);
+}
+
+.uploadIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.fileInput {
+  display: none;
+}
+
+.browseBtn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+.fileInfo {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--gray);
+}
+
+.previewContainer {
+  margin: 1.5rem 0;
+  display: none;
+}
+
+.previewImage {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.continueBtn {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.continueBtn:disabled {
+  background: var(--gray);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.continueBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(43, 108, 176, 0.4);
+}
+
+.cryptoDecoration {
+  position: fixed;
+  opacity: 0.1;
+  z-index: -1;
+  font-size: 3rem;
+}
+
+.decoration1 {
+  top: 20%;
+  left: 10%;
+}
+
+.decoration2 {
+  bottom: 15%;
+  right: 10%;
+}

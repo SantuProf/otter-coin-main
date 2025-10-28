@@ -1,0 +1,140 @@
+/* Styles for the Wallet Dashboard Page */
+:root {
+  --primary: #2b6cb0;
+  --secondary: #38b2ac;
+  --dark: #1a202c;
+  --light: #f7fafc;
+  --gray: #e2e8f0;
+  --dark-gray: #4a5568;
+}
+
+.dashboard {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.dashboardContainer {
+  max-width: 700px;
+  margin: 3vh auto;
+  background: rgba(26, 32, 44, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem 1.5rem 1.5rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.08);
+  position: relative;
+}
+
+.backBtn {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--light);
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.headerTitle {
+  font-size: 1.5rem;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.x2Case {
+  background: rgba(15, 20, 30, 0.7);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  right: 0rem;
+  top: 0.5rem;
+}
+
+.balanceCard {
+  background: rgba(26, 32, 44, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.balanceTitle {
+  font-size: 0.9rem;
+  color: var(--gray);
+  margin-bottom: 0.5rem;
+}
+
+.balanceAmount {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.balanceCurrency {
+  color: var(--secondary);
+}
+
+.actionButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.actionBtn {
+  background: rgba(15, 20, 30, 0.7);
+  border-radius: 8px;
+  padding: 1rem;
+  border: none;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.actionBtn:hover {
+  transform: translateY(-2px);
+  background: rgba(43, 108, 176, 0.3);
+}
+
+.actionIcon {
+  font-size: 1.5rem;
+}
+
+.cryptoDecoration {
+  position: fixed;
+  opacity: 0.1;
+  z-index: -1;
+  font-size: 3rem;
+}
+
+.decoration1 {
+  top: 20%;
+  left: 10%;
+}
+
+.decoration2 {
+  bottom: 15%;
+  right: 10%;
+}

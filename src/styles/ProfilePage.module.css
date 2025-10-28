@@ -1,0 +1,178 @@
+
+/* ProfilePage.module.css */
+:root {
+  --primary: #2b6cb0;
+  --secondary: #38b2ac;
+  --dark: #1a202c;
+  --light: #f7fafc;
+  --gray: #e2e8f0;
+  --dark-gray: #4a5568;
+}
+
+.profileContainer {
+  max-width: 500px;
+  position: relative;
+  background: rgba(26, 32, 44, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+@media (min-width: 501px) {
+  .profileContainer {
+    min-width: 500px;
+  }
+}
+
+@media (min-width: 400px) {
+  .profileContainer {
+    min-width: 380px;
+  }
+}
+
+.profileHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.profileTitle {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.profileAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.profileDetails {
+  margin-bottom: 2rem;
+}
+
+.detailRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  word-break: break-word;
+}
+
+.detailLabel {
+  color: var(--gray);
+  font-size: 0.9rem;
+}
+
+.detailValue {
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.logoutBtn {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  background: rgba(229, 62, 62, 0.2);
+  color: #e53e3e;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  border: 1px solid rgba(229, 62, 62, 0.3);
+}
+
+.logoutBtn:hover {
+  background: rgba(229, 62, 62, 0.3);
+  transform: translateY(-2px);
+}
+
+.cryptoDecoration {
+  position: fixed;
+  opacity: 0.1;
+  z-index: -1;
+  font-size: 3rem;
+}
+
+.decoration1 {
+  top: 20%;
+  left: 10%;
+}
+
+.decoration2 {
+  bottom: 15%;
+  right: 10%;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.walletIcon {
+  cursor: pointer;
+  font-size: 30px;
+  position: relative;
+  top: 0;
+  left: 0;
+  margin-left: 0;
+}
+
+.settingIcon {
+  cursor: pointer;
+  font-size: 30px;
+  position: relative;
+  top: 0;
+  right: 0;
+  margin-left: 0;
+}
+/* Add a wrapper for the icons to position them above the profile container */
+.profileIconsWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: -24px;
+  z-index: 2;
+  position: sticky;
+}
+
+nav {
+  margin-top: 20px;
+  padding: 0%;
+}
+nav ul {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background-color: aliceblue;
+  padding: 20px;
+  border-radius: 10px;
+}
+li {
+  list-style-type: none;
+  background-color: rgba(15, 20, 30, 1);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 0 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  align-items: center;
+  text-align: center;
+  margin-top: 5px;
+}

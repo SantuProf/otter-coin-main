@@ -1,0 +1,72 @@
+/* SettingPage.module.css */
+:root {
+  --primary: #2b6cb0;
+  --secondary: #38b2ac;
+  --dark: #1a202c;
+  --light: #f7fafc;
+  --gray: #e2e8f0;
+  --dark-gray: #4a5568;
+}
+
+.cryptoDecoration {
+  position: fixed;
+  opacity: 0.1;
+  z-index: -1;
+  font-size: 3rem;
+}
+
+.decoration1 {
+  top: 20%;
+  left: 10%;
+}
+
+.decoration2 {
+  bottom: 15%;
+  right: 10%;
+}
+
+.containers1 {
+  height: 288px;
+  width: 400px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 25%;
+  background: rgb(39, 47, 63, 0.3);
+}
+
+.containers1 button {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary);
+  color: var(--light);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: 311px;
+}
+
+.button {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--light);
+}
+
+@media screen and (max-width: 600px) {
+  .containers1 {
+    width: 300px;
+    padding: 20px;
+    height: auto;
+  }
+  .containers1 button {
+    width: -webkit-fill-available;
+  }
+}

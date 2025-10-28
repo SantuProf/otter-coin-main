@@ -1,0 +1,138 @@
+/* AdminLogin.module.css - match SignupPage look */
+:root {
+  --primary: #2b6cb0;
+  --secondary: #38b2ac;
+  --dark: #1a202c;
+  --light: #f7fafc;
+  --gray: #e2e8f0;
+}
+
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1.25rem;
+}
+
+.loginTypeToggle {
+  display: flex;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toggleBtn {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  background: rgba(15, 20, 30, 0.7);
+  color: var(--gray);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.toggleBtn:hover {
+  background: rgba(43, 108, 176, 0.2);
+}
+
+.toggleBtn.active {
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  color: white;
+}
+  
+.formCard {
+  background: rgba(26, 32, 44, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 520px; /* allow more space on desktop */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.title {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.inputGroup {
+  margin-bottom: 0.9rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--gray);
+}
+
+.input {
+  width: 100%;
+  padding: 0.78rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(15, 20, 30, 0.75);
+  color: var(--light);
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 0.78rem;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.75rem;
+}
+
+.note {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--gray);
+}
+
+@media (max-width: 480px) {
+  .formCard {
+    padding: 1rem;
+    border-radius: 12px;
+    max-width: 94vw;
+  }
+  .title { font-size: 1.35rem; }
+  .input { padding: 0.7rem 0.9rem; font-size: 0.98rem; }
+  .submitBtn { padding: 0.72rem; font-size: 0.98rem; }
+}
+
+/* improve layout on medium and large screens */
+@media (min-width: 900px) {
+  .formCard {
+    max-width: 640px;
+    padding: 2.25rem;
+  }
+  .title { font-size: 1.8rem; }
+}
+
+/* small accessibility/focus tweaks */
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(43,108,176,0.12);
+  border-color: rgba(43,108,176,0.8);
+}
+
+.submitBtn:active {
+  transform: translateY(1px);
+}
